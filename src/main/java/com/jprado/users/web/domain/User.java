@@ -1,29 +1,34 @@
 package com.jprado.users.web.domain;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class User {
 
+	@NotNull(message = ValidationConstants.COMMON_FIELD_NOT_NULL)
+	@NotEmpty(message = ValidationConstants.COMMON_FIELD_NOT_EMPTY)
 	private String fullname;
+	
+	@NotNull(message = ValidationConstants.COMMON_FIELD_NOT_NULL)
+	@NotEmpty(message = ValidationConstants.COMMON_FIELD_NOT_EMPTY)
 	private String email;
+	
 	private String description;
 	
-	public String getFullname() {
-		return fullname;
-	}
-	public void setFullname(String fullname) {
-		this.fullname = fullname;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
+
 	
 	
 	

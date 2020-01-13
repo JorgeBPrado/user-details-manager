@@ -1,5 +1,7 @@
 package com.jprado.users.web.controller;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,52 +17,33 @@ import com.jprado.users.UserDontExistUserManagementException;
 import com.jprado.users.web.domain.User;
 import com.jprado.users.web.service.UserManagementService;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
+@RequiredArgsConstructor
+@RequestMapping("user/")
 public class UserManagementController {
 	
-	Logger logger = LoggerFactory.getLogger("user-management.controller");
+	private final UserManagementService userManagementService;
 
-    UserManagementService userManagementService;
-
-    @Autowired
-    public UserManagementController(UserManagementService userManagementService) {
-    	this.userManagementService = userManagementService;
-	}
-
-    @RequestMapping(method = RequestMethod.GET, value = "user/{id}", produces = "application/json")
-    public ResponseEntity<User> placeToken(@PathVariable String id) {
+    @RequestMapping(method = RequestMethod.GET, value = "{id}", produces = "application/json")
+    public ResponseEntity<User> getUser(@PathVariable String id) {
     	
-    	logger.debug("User data requested for user {} ", id);
+    	log.debug("User data requested for user {} ", id);
     	
-    	User user = null;
-    	
-    	try {
-    		user = userManagementService.getUser(id);
-    	} catch (UserDontExistUserManagementException e) {
-    		logger.debug("The user {} was not found", id);
-			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
-    	} catch (Exception e) {
-			logger.error("Unexpected exception thrown. Type: {} Message: {}", e.getClass(), e.getMessage());
-			return new ResponseEntity<User>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-       return new ResponseEntity<User>(user, HttpStatus.OK);
+    	return new ResponseEntity<User>(userManagementService.getUser(id), HttpStatus.OK);
     }
     
-    @RequestMapping(method = RequestMethod.PUT, value = "user/{id}", produces = "application/json")
-    public ResponseEntity<Void> placeToken(@RequestBody User user, @PathVariable String id) {
+    @RequestMapping(method = RequestMethod.PUT, value = "{id}", produces = "application/json")
+    public ResponseEntity<Void> updateUser(@Valid @RequestBody User user, @PathVariable String id) {
     	
-    	logger.debug("User data updated for user {} ", id);
+    	log.debug("User data updated for user {} ", id);
     	
-    	try {
-    		userManagementService.updateUser(id, user);
-    	} catch (UserDontExistUserManagementException e) {
-    		logger.debug("The user {} was not found", id);
-			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
-    	} catch (Exception e) {
-			logger.error("Unexpected exception thrown. Type: {} Message: {}", e.getClass(), e.getMessage());
-			return new ResponseEntity<Void>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-       return new ResponseEntity<Void>(HttpStatus.OK);
+    	userManagementService.updateUser(id, user);
+   
+    	return new ResponseEntity<Void>(HttpStatus.OK);
     }
     
    

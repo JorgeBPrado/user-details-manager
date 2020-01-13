@@ -12,53 +12,30 @@ import com.jprado.users.repository.RepositoryException;
 import com.jprado.users.repository.UsersDAO;
 import com.jprado.users.web.domain.User;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class UserManagementServiceImpl implements UserManagementService {
 	
-	Logger logger = LoggerFactory.getLogger("user-management.service");
 
-	private UsersDAO usersDAO;
-	
-	@Autowired
-	public UserManagementServiceImpl(UsersDAO usersDAO) {
-		this.usersDAO = usersDAO;
-	}
+	private final UsersDAO usersDAO;
 	
 	@Override
 	public User getUser(String userId) {
-		User user = null;
+	
+		log.debug("Retrieving data from user {}", userId);
 		
-		logger.debug("Retrieving data from user {}", userId);
-		
-		try {
-			user = this.usersDAO.getUserById(userId);
-		} catch (EntityDontExistRepositoryException e) {
-			String msg = String.format("User with id %s does not exist", userId);
-			logger.error(msg);
-			throw new UserDontExistUserManagementException(msg);
-		} catch (RepositoryException e) {
-			String msg = String.format("An error has occurred while retrieving user {}", userId);
-			logger.error(msg);
-			throw new UserManagementApplicationException(msg);
-		}
-		return user;
+		return this.usersDAO.getUserById(userId);
 	}
 
 	@Override
 	public void updateUser(String userId, User userdata) {
 		
-		logger.debug("Updating data from user {}", userId);
+		log.debug("Updating data from user {}", userId);
 		
-		try {
-			this.usersDAO.updateUser(userId, userdata);
-		} catch (EntityDontExistRepositoryException e) {
-			String msg = String.format("User with id %s does not exist and cant be updated", userId);
-			logger.error(msg);
-			throw new UserDontExistUserManagementException(msg);
-		} catch (RepositoryException e) {
-			String msg = String.format("An error has occurred while updating user {}", userId);
-			logger.error(msg);
-			throw new UserManagementApplicationException(msg);
-		}
+		this.usersDAO.updateUser(userId, userdata);
 	}	
 }
